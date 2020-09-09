@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreNFC
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,6 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+		FirebaseApp.configure()
         return true
     }
 
@@ -32,34 +34,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
-    
-//    func application(_ application: UIApplication,
-//                     continue userActivity: NSUserActivity,
-//                     restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
-//
-//        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb else {
-//            return false
-//        }
-//
-//        // Confirm that the NSUserActivity object contains a valid NDEF message.
-//        let ndefMessage = userActivity.ndefMessagePayload
-//        guard ndefMessage.records.count > 0,
-//            ndefMessage.records[0].typeNameFormat != .empty else {
-//                return false
-//        }
-//
-//        // Send the message to `MessagesTableViewController` for processing.
-//        guard let navigationController = window?.rootViewController as? UINavigationController else {
-//            return false
-//        }
-//
-//        navigationController.popToRootViewController(animated: true)
-//        let viewController = navigationController.topViewController as? ViewController
-//        viewController?.addMessage(fromUserActivity: ndefMessage)
-//
-//        return true
-//    }
-
-
 }
 
