@@ -13,7 +13,6 @@
 		DB1D6B1224CFC825006F6166 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB1D6B1124CFC825006F6166 /* Assets.xcassets */; };
 		DB1D6B1524CFC825006F6166 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB1D6B1424CFC825006F6166 /* Preview Assets.xcassets */; };
 		DB1D6B1824CFC825006F6166 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DB1D6B1624CFC825006F6166 /* LaunchScreen.storyboard */; };
-		DB1D6B2024CFC853006F6166 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = DB1D6B1F24CFC852006F6166 /* art.scnassets */; };
 		DB1D6B2224CFC85B006F6166 /* ARViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1D6B2124CFC85B006F6166 /* ARViewController.swift */; };
 		DB1EBCE024E23BCD009D8910 /* ARView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EBCDF24E23BCD009D8910 /* ARView.swift */; };
 		DB1EBCE224E24A5F009D8910 /* InfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EBCE124E24A5F009D8910 /* InfoView.swift */; };
@@ -35,7 +34,6 @@
 		DB1D6B1424CFC825006F6166 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		DB1D6B1724CFC825006F6166 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DB1D6B1924CFC825006F6166 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DB1D6B1F24CFC852006F6166 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		DB1D6B2124CFC85B006F6166 /* ARViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARViewController.swift; sourceTree = "<group>"; };
 		DB1EBCDE24E23B80009D8910 /* Ansible AR.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Ansible AR.entitlements"; sourceTree = "<group>"; };
 		DB1EBCDF24E23BCD009D8910 /* ARView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARView.swift; sourceTree = "<group>"; };
@@ -86,7 +84,6 @@
 				DB9E8BA024DEEB0F001170D6 /* Model */,
 				DB9E8BA224DEEB20001170D6 /* Utilities */,
 				DB1D6B1124CFC825006F6166 /* Assets.xcassets */,
-				DB1D6B1F24CFC852006F6166 /* art.scnassets */,
 				DB1D6B1924CFC825006F6166 /* Info.plist */,
 				DBB1298324D3C0DA003D27A7 /* SupportingFiles */,
 				DB1D6B1324CFC825006F6166 /* Preview Content */,
@@ -217,7 +214,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB1D6B1824CFC825006F6166 /* LaunchScreen.storyboard in Resources */,
-				DB1D6B2024CFC853006F6166 /* art.scnassets in Resources */,
 				DB1D6B1524CFC825006F6166 /* Preview Assets.xcassets in Resources */,
 				DB1D6B1224CFC825006F6166 /* Assets.xcassets in Resources */,
 			);
@@ -390,7 +386,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.romrell4.ansible-ar";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.romrell4.prototyping-ar";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
@@ -414,7 +410,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.romrell4.ansible-ar";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.romrell4.prototyping-ar";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
