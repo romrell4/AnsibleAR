@@ -41,17 +41,19 @@ class ViewModel: ObservableObject, Identifiable {
 		
 		db.collection("systems").document("dependencies").addSnapshotListener { (snapshot, error) in
 			if let snapshot = snapshot, let dependencies = snapshot.data() as? [String: [String]] {
-				//Turn the dependencies map into a list of widgets for use in the app
-				self.widgets = dependencies.compactMap { (widgetName, childNames) -> Model.WidgetIdentifier? in
-					guard let id = idFromName(widgetName) else { return nil }
-					
-					return Model.WidgetIdentifier(id: id, name: widgetName, children: childNames.compactMap {
-						guard let id = idFromName($0) else { return nil }
-						return Model.Child(id: id)
+				DispatchQueue.main.async {
+					//Turn the dependencies map into a list of widgets for use in the app
+					self.widgets = dependencies.compactMap { (widgetName, childNames) -> Model.WidgetIdentifier? in
+						guard let id = idFromName(widgetName) else { return nil }
+						
+						return Model.WidgetIdentifier(id: id, name: widgetName, children: childNames.compactMap {
+							guard let id = idFromName($0) else { return nil }
+							return Model.Child(id: id)
+						})
+					}.sorted(by: { (lhs, rhs) -> Bool in
+						lhs.name < rhs.name
 					})
-				}.sorted(by: { (lhs, rhs) -> Bool in
-					lhs.name < rhs.name
-				})
+				}
 			} else {
 				print("Error getting widget dependencies: \(error?.localizedDescription ?? "")")
 			}
