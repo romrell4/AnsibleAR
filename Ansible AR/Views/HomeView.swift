@@ -26,7 +26,7 @@ struct HomeView: View {
                     .fontWeight(.bold)
                     .padding()
                 
-                Text("Use this app to superimpose a virtual directed graph on widgets in your environment using images or NFC tags.")
+                Text("Use this app to superimpose a virtual directed graph on widgets in your environment using image identifiers.")
                     .font(.body)
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
@@ -41,7 +41,7 @@ struct HomeView: View {
                         HStack {
                             Spacer()
                             
-                            Text("Image Detection")
+                            Text("Get Started")
                                 .padding(.vertical)
                                 .foregroundColor(.white)
                             
@@ -50,21 +50,6 @@ struct HomeView: View {
                         .background(Color("gray90"))
                         .cornerRadius(8)
                     }
-                    
-                    Button(action: { self.load(); self.isActive = true } ) {
-                        HStack {
-                            Spacer()
-                            
-                            Text("NFC")
-                                .padding(.vertical)
-                                .foregroundColor(.white)
-                            
-                            Spacer()
-                        }
-                        .background(Color("gray90"))
-                        .cornerRadius(8)
-                    }
-                    
                 }
                 .padding(.bottom)
                 NavigationLink(destination: ARView(), isActive: $isActive) { EmptyView() }

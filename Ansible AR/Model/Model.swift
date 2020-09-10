@@ -6,8 +6,6 @@
 //  Copyright © 2020 Gavin Jensen. All rights reserved.
 //
 
-import CoreNFC
-
 public class Model {
     
 //    var widgets: [WidgetIdentifier] = []
@@ -19,30 +17,13 @@ public class Model {
         
         let id: Int
         let name: String
-        let widgetType: Int
         var children: [Child]
         var detected: Bool? = false
         
-        init(id: Int, name: String, widgetType: Int) {
+		init(id: Int, name: String, children: [Child]) {
             self.id = id
             self.name = name
-            self.widgetType = widgetType
-            children = []
-        }
-        
-        init?(message: NFCNDEFMessage) {
-            guard
-                let locationRecord = message.records.first,
-                let widgetName = locationRecord.wellKnownTypeTextPayload().0
-                else {
-                    return nil
-            }
-            
-            self.id = -1
-            self.name = widgetName
-            self.detected = true
-            self.widgetType = 1
-            self.children = []
+			self.children = children
         }
     }
     
