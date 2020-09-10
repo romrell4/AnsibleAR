@@ -110,7 +110,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func setupImageDetection() {
-        guard let storedImages =  ARReferenceImage.referenceImages(inGroupNamed: "widgetIdentifiers", bundle: nil) else {
+        guard let storedImages = ARReferenceImage.referenceImages(inGroupNamed: "widgetIdentifiers", bundle: nil) else {
             fatalError("Missing AR Resources images")
         }
         

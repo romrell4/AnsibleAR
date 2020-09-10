@@ -18,12 +18,7 @@ struct WidgetList: View {
     var body: some View {
         NavigationView {
             Form {
-//
-//                NavigationLink(destination: NFCWriteView()) {
-//                    Text("Write new data to NFC tags")
-//                }
-                
-                Section(header: Text("Loaded from JSON").padding(.top) ) {
+                Section(header: Text("Loaded from Prototyping Server").padding(.top) ) {
                     ForEach(viewModel.widgets) { widget in
                         HStack {
                             VStack(alignment: .leading) {
@@ -43,20 +38,6 @@ struct WidgetList: View {
                                         
                                         HStack {
                                             Text("\(widget.id)")
-                                            Spacer()
-                                        }
-                                        .frame(width: self.secondColumnWidth)
-                                    }
-                                    
-                                    HStack {
-                                        HStack {
-                                            Text("Type:")
-                                            Spacer()
-                                        }
-                                        .frame(width: self.firstColumnWidth)
-                                        
-                                        HStack {
-                                            Text(widget.widgetType == 0 ? "Image Detection" : "NFC Detection")
                                             Spacer()
                                         }
                                         .frame(width: self.secondColumnWidth)

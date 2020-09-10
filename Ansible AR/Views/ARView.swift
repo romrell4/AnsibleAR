@@ -9,13 +9,12 @@
 import SwiftUI
 
 enum ActiveSheet {
-    case listSheet, infoSheet, jsonSheet
+    case listSheet, infoSheet
 }
 
 struct ARView: View {
     
     @EnvironmentObject var viewModel: ViewModel
-//    @EnvironmentObject var orientationInfo: OrientationInfo
     
     @State var activeSheet: ActiveSheet = .infoSheet
     @State private var isPresented = false
@@ -43,8 +42,6 @@ struct ARView: View {
             return AnyView(WidgetList().environmentObject(viewModel))
         case .infoSheet:
             return AnyView(InfoView())
-        case .jsonSheet:
-            return AnyView(CustomJsonView())
         }
     }
     
@@ -68,24 +65,21 @@ struct ARView: View {
                     }
                     
                     Spacer()
-                    
-                    Button(action: {
-                        self.activeSheet = .jsonSheet
+					
+					Button(action: {
+                        self.activeSheet = .listSheet
                         self.isPresented = true
-                        //                    self.isPresentedJson = true
                     }) {
-                        
                         ZStack {
                             Circle()
                                 .frame(width: 56, height: 56)
                                 .foregroundColor(.white)
                                 .opacity(0.5)
-                            Image(systemName: "square.and.arrow.down.fill")
+                            Image(systemName: "list.bullet")
                                 .foregroundColor(.black)
                         }
                     }
-                }
-                //            .background(Color.pink)
+				}
                 
                 Spacer()
                 
@@ -93,7 +87,6 @@ struct ARView: View {
                     
                     RoundedRectangle(cornerRadius: 100)
                         .frame(width: 172, height: 56)
-                        //                                .opacity(0.75)
                         .foregroundColor(.white)
                         .overlay(
                             HStack {
@@ -109,19 +102,6 @@ struct ARView: View {
 
                     
                     Spacer()
-                    Button(action: {
-                        self.activeSheet = .listSheet
-                        self.isPresented = true
-                    }) {
-                        ZStack {
-                            Circle()
-                                .frame(width: 56, height: 56)
-                                .foregroundColor(.white)
-                                .opacity(0.5)
-                            Image(systemName: "list.bullet")
-                                .foregroundColor(.black)
-                        }
-                    }
                 }
             }
             .padding(.vertical, 48)
@@ -135,7 +115,6 @@ struct ARViewRepresentable: UIViewControllerRepresentable {
     
     var viewModel: ViewModel
     @Binding var closeUpMode: Bool
-    //    @Binding var widgetModel: Model.WidgetIdentifier?
     
     func makeUIViewController(context: Context) -> ARViewController {
         let view = ARViewController()
@@ -144,13 +123,7 @@ struct ARViewRepresentable: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: ARViewController, context: Context) {
-        
         uiViewController.changeSize(to: closeUpMode)
-        //        if let widget = widgetModel {
-        //            uiViewController.getPositionForNFCScan(widget: widget)
-        //        } else {
-        //            print("Could not get widget information")
-        //        }
     }
 }
 

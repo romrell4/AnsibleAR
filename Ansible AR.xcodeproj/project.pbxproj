@@ -20,10 +20,7 @@
 		DB1EBCE224E24A5F009D8910 /* InfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB1EBCE124E24A5F009D8910 /* InfoView.swift */; };
 		DB2F72A724D5E84F00E20AAC /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB2F72A624D5E84F00E20AAC /* ViewModel.swift */; };
 		DB4C2FEB24DCDE71008C80B0 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4C2FEA24DCDE71008C80B0 /* Utility.swift */; };
-		DB4C2FED24DCE37C008C80B0 /* CustomJsonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4C2FEC24DCE37C008C80B0 /* CustomJsonView.swift */; };
 		DB4C2FEF24DDB4B5008C80B0 /* WidgetList.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4C2FEE24DDB4B5008C80B0 /* WidgetList.swift */; };
-		DB71459424DB94BE00A2C806 /* NFCWriteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71459324DB94BE00A2C806 /* NFCWriteView.swift */; };
-		DB71459624DB958D00A2C806 /* NFCUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB71459524DB958D00A2C806 /* NFCUtility.swift */; };
 		DBB1298224D3BD2E003D27A7 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBB1298124D3BD2E003D27A7 /* Model.swift */; };
 /* End PBXBuildFile section */
 
@@ -46,10 +43,7 @@
 		DB1EBCE124E24A5F009D8910 /* InfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoView.swift; sourceTree = "<group>"; };
 		DB2F72A624D5E84F00E20AAC /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		DB4C2FEA24DCDE71008C80B0 /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
-		DB4C2FEC24DCE37C008C80B0 /* CustomJsonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomJsonView.swift; sourceTree = "<group>"; };
 		DB4C2FEE24DDB4B5008C80B0 /* WidgetList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetList.swift; sourceTree = "<group>"; };
-		DB71459324DB94BE00A2C806 /* NFCWriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCWriteView.swift; sourceTree = "<group>"; };
-		DB71459524DB958D00A2C806 /* NFCUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCUtility.swift; sourceTree = "<group>"; };
 		DBB1298124D3BD2E003D27A7 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -131,9 +125,7 @@
 			children = (
 				DB1D6B0F24CFC824006F6166 /* HomeView.swift */,
 				DB1EBCDF24E23BCD009D8910 /* ARView.swift */,
-				DB4C2FEC24DCE37C008C80B0 /* CustomJsonView.swift */,
 				DB4C2FEE24DDB4B5008C80B0 /* WidgetList.swift */,
-				DB71459324DB94BE00A2C806 /* NFCWriteView.swift */,
 				DB1EBCE124E24A5F009D8910 /* InfoView.swift */,
 			);
 			path = Views;
@@ -158,7 +150,6 @@
 		DB9E8BA224DEEB20001170D6 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				DB71459524DB958D00A2C806 /* NFCUtility.swift */,
 				DB4C2FEA24DCDE71008C80B0 /* Utility.swift */,
 			);
 			path = Utilities;
@@ -299,8 +290,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB4C2FEB24DCDE71008C80B0 /* Utility.swift in Sources */,
-				DB71459424DB94BE00A2C806 /* NFCWriteView.swift in Sources */,
-				DB4C2FED24DCE37C008C80B0 /* CustomJsonView.swift in Sources */,
 				DB1D6B0C24CFC824006F6166 /* AppDelegate.swift in Sources */,
 				DB1D6B0E24CFC824006F6166 /* SceneDelegate.swift in Sources */,
 				DB1EBCE224E24A5F009D8910 /* InfoView.swift in Sources */,
@@ -308,7 +297,6 @@
 				DB1D6B2224CFC85B006F6166 /* ARViewController.swift in Sources */,
 				DBB1298224D3BD2E003D27A7 /* Model.swift in Sources */,
 				DB1D6B1024CFC824006F6166 /* HomeView.swift in Sources */,
-				DB71459624DB958D00A2C806 /* NFCUtility.swift in Sources */,
 				DB2F72A724D5E84F00E20AAC /* ViewModel.swift in Sources */,
 				DB4C2FEF24DDB4B5008C80B0 /* WidgetList.swift in Sources */,
 			);

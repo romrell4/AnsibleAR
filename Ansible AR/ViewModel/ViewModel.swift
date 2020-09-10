@@ -7,30 +7,19 @@
 //
 
 import SceneKit
+import Firebase
+
+private let totalWidgets = 12
 
 class ViewModel: ObservableObject, Identifiable {
     
-//    private var model = Model()
-//
-//    var widgets: [Model.WidgetIdentifier] {
-//        return model.widgets
-//    }
+	private let db = Firestore.firestore()
     
     @Published var widgets = [Model.WidgetIdentifier]()
     
-    var defaultURLString: String = "https://api.jsonbin.io/b/5f2db9b86f8e4e3faf2d8d8c/7"
-    var urlString: String = ""
-    
-    static var totalWidgets = 12
-    
-    var scnNodes: [SCNNode] = makePositions()
+    var scnNodes: [SCNNode] = Array(repeating: SCNNode(), count: totalWidgets)
     
     //MARK: - Mutators
-    
-    func addWidget(widget: Model.WidgetIdentifier) {
-        self.widgets.append(widget)
-        scnNodes.append(SCNNode())
-    }
     
     func changePosition(to position: SCNVector3, at index: Int) {
         scnNodes[index].position = position
@@ -44,49 +33,30 @@ class ViewModel: ObservableObject, Identifiable {
         self.widgets[index].detected = detected
     }
     
-    func load(from urlString: String) {
-        self.urlString = urlString
-        let url = URL(string: urlString)!
-        
-        print("Load")
-        load(from: url)
-    }
-    
     func load() {
-        if urlString.isEmpty {
-            print("Is Empty")
-            let url = URL(string: defaultURLString)!
-            load(from: url)
-            urlString = "-1"
-        }
-    }
-    
-    func load(from url: URL) {
-        URLSession.shared.dataTask(with: url) {(data, response, error) in
-                   do {
-                       if let d = data {
-                           let decodedData = try JSONDecoder().decode([Model.WidgetIdentifier].self, from: d)
-                           DispatchQueue.main.async {
-                               self.widgets = decodedData
-                               print("Done Fetching")
-                           }
-                       }else {
-                           print("No Data")
-                       }
-                   } catch {
-                       print ("Error:", error)
-                   }
-                   
-               }.resume()
-    }
-    
-    static func makePositions() -> [SCNNode] {
-                
-        var nodes = [SCNNode]()
-        
-        for _ in 0..<totalWidgets {
-            nodes.append(SCNNode())
-        }
-        return nodes
+		//This is making the obtuse assumption that widget names will always be "widget<id>"
+		func idFromName(_ name: String) -> Int? {
+			return Int(name.replacingOccurrences(of: "widget", with: ""))
+		}
+		
+		db.collection("systems").document("dependencies").addSnapshotListener { (snapshot, error) in
+			if let snapshot = snapshot, let dependencies = snapshot.data() as? [String: [String]] {
+				//Turn the dependencies map into a list of widgets for use in the app
+				self.widgets = dependencies.compactMap { (widgetName, childNames) -> Model.WidgetIdentifier? in
+					guard let id = idFromName(widgetName) else { return nil }
+					
+					var widget = Model.WidgetIdentifier(id: id, name: widgetName, widgetType: 0)
+					widget.children = childNames.compactMap {
+						guard let id = idFromName($0) else { return nil }
+						return Model.Child(id: id)
+					}
+					return widget
+				}.sorted(by: { (lhs, rhs) -> Bool in
+					lhs.name < rhs.name
+				})
+			} else {
+				print("Error getting widget dependencies: \(error?.localizedDescription ?? "")")
+			}
+		}
     }
 }
