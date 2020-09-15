@@ -18,7 +18,7 @@ public class Model {
         let id: Int
         let name: String
         var children: [Child]
-        var detected: Bool? = false
+        var detected: Bool = false
         
 		init(id: Int, name: String, children: [Child]) {
             self.id = id

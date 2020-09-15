@@ -182,11 +182,6 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         return node
     }
     
-    func initializeNode(for nfcWidget: Model.WidgetIdentifier) {
-        
-//        let node = SCNNode()
-    }
-    
     func detectAndAssign(int: Int, node: SCNNode) {
         viewModel.changeNode(to: node, at: int)
         viewModel.changeDetected(at: int)
@@ -198,9 +193,9 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         
         removeAllNodes(named: "line")
         
-        for widget1 in viewModel.widgets {
-            for widget2 in viewModel.widgets {
-                if isAncestor(parent: widget1, child: widget2) && (widget1.detected == true) && (widget2.detected == true) {
+        for widget1 in viewModel.detectedWidgets {
+            for widget2 in viewModel.detectedWidgets {
+				if isAncestor(parent: widget1, child: widget2) {
                     let pos1 = viewModel.scnNodes[widget1.id].position
                     let pos2 = viewModel.scnNodes[widget2.id].position
                     createLine(from: pos1, to: pos2)
@@ -208,6 +203,19 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
             }
         }
     }
+	
+    func animateStream() {
+        for widget1 in viewModel.detectedWidgets {
+            for widget2 in viewModel.detectedWidgets {
+                if isAncestor(parent: widget1, child: widget2) {
+                    let start = viewModel.scnNodes[widget1.id].position
+                    let end = viewModel.scnNodes[widget2.id].position
+                    createAnimatingNode(from: start, to: end)
+                }
+            }
+        }
+    }
+
     
     func addTextNode(to node: SCNNode, name: String) {
         print("Making Text Nodes")
@@ -287,19 +295,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
             self.animateStream()
         }
     }
-    
-    func animateStream() {
-        for widget1 in viewModel.widgets {
-            for widget2 in viewModel.widgets {
-                if isAncestor(parent: widget1, child: widget2) && (widget1.detected == true) && (widget2.detected == true) {
-                    let start = viewModel.scnNodes[widget1.id].position
-                    let end = viewModel.scnNodes[widget2.id].position
-                    createAnimatingNode(from: start, to: end)
-                }
-            }
-        }
-    }
-    
+	
     func createAnimatingNode(from start: SCNVector3, to end: SCNVector3) {
         
         let newStart = SCNVector3(start.x, start.y + yOffset, start.z)
@@ -336,13 +332,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func isAncestor(parent: Model.WidgetIdentifier, child: Model.WidgetIdentifier) -> Bool {
-        
-        for parentChild in parent.children {
-            if parentChild.id == child.id {
-                return true
-            }
-        }
-        return false
+		return parent.children.contains { $0.id == child.id }
     }
 }
 

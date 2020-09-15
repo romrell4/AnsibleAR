@@ -18,12 +18,10 @@ struct ARView: View {
     
     @State var activeSheet: ActiveSheet = .infoSheet
     @State private var isPresented = false
-    @State private var closeUpMode = true
-    
     
     var body: some View {
         ZStack {
-            ARViewRepresentable(viewModel: viewModel, closeUpMode: $closeUpMode)
+            ARViewRepresentable(viewModel: viewModel)
             ui
         }
         .edgesIgnoringSafeArea(.all)
@@ -82,27 +80,6 @@ struct ARView: View {
 				}
                 
                 Spacer()
-                
-                HStack {
-                    
-                    RoundedRectangle(cornerRadius: 100)
-                        .frame(width: 172, height: 56)
-                        .foregroundColor(.white)
-                        .overlay(
-                            HStack {
-                                
-                                Toggle(isOn: self.$closeUpMode) {
-                                    Text("Close Up")
-                                }
-                            }
-                            .foregroundColor(.black)
-                            .padding(.horizontal)
-                    )
-                    
-
-                    
-                    Spacer()
-                }
             }
             .padding(.vertical, 48)
             .padding(.horizontal, geo.size.height > geo.size.width ? 16 : 48)
@@ -114,7 +91,6 @@ struct ARView: View {
 struct ARViewRepresentable: UIViewControllerRepresentable {
     
     var viewModel: ViewModel
-    @Binding var closeUpMode: Bool
     
     func makeUIViewController(context: Context) -> ARViewController {
         let view = ARViewController()
@@ -123,7 +99,6 @@ struct ARViewRepresentable: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: ARViewController, context: Context) {
-        uiViewController.changeSize(to: closeUpMode)
     }
 }
 

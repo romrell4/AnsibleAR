@@ -7,7 +7,7 @@
 //
 
 import SceneKit
-import Firebase
+import FirebaseFirestore
 
 private let totalWidgets = 12
 
@@ -15,7 +15,11 @@ class ViewModel: ObservableObject, Identifiable {
     
 	private let db = Firestore.firestore()
     
-    @Published var widgets = [Model.WidgetIdentifier]()
+	@Published var widgets = (0..<totalWidgets).map {
+		Model.WidgetIdentifier(id: $0, name: "widget\($0)", children: [])
+	}
+	
+	var detectedWidgets: [Model.WidgetIdentifier] { widgets.filter { $0.detected } }
     
     var scnNodes: [SCNNode] = Array(repeating: SCNNode(), count: totalWidgets)
     
@@ -30,7 +34,9 @@ class ViewModel: ObservableObject, Identifiable {
     }
     
     func changeDetected(to detected: Bool = true, at index: Int) {
-        self.widgets[index].detected = detected
+		DispatchQueue.main.async {
+			self.widgets[index].detected = detected
+		}
     }
     
     func load() {
@@ -39,20 +45,21 @@ class ViewModel: ObservableObject, Identifiable {
 			return Int(name.replacingOccurrences(of: "widget", with: ""))
 		}
 		
-		db.collection("systems").document("dependencies").addSnapshotListener { (snapshot, error) in
+		db.collection("dependencies").document("dependencies").addSnapshotListener { (snapshot, error) in
 			if let snapshot = snapshot, let dependencies = snapshot.data() as? [String: [String]] {
 				DispatchQueue.main.async {
-					//Turn the dependencies map into a list of widgets for use in the app
-					self.widgets = dependencies.compactMap { (widgetName, childNames) -> Model.WidgetIdentifier? in
+					//Update children of widgets based on dependency list
+					dependencies.compactMap { (widgetName, childNames) -> (Int, [Int])? in
+						//Turn the names into ids
 						guard let id = idFromName(widgetName) else { return nil }
 						
-						return Model.WidgetIdentifier(id: id, name: widgetName, children: childNames.compactMap {
-							guard let id = idFromName($0) else { return nil }
-							return Model.Child(id: id)
-						})
-					}.sorted(by: { (lhs, rhs) -> Bool in
-						lhs.name < rhs.name
-					})
+						return (id, childNames.compactMap { idFromName($0) })
+					}.forEach { widgetId, childIds in
+						if let index = self.widgets.firstIndex(where: { $0.id == widgetId }) {
+							print("Setting \(widgetId)'s children to \(childIds)")
+							self.widgets[index].children = childIds.map { Model.Child(id: $0) }
+						}
+					}
 				}
 			} else {
 				print("Error getting widget dependencies: \(error?.localizedDescription ?? "")")
