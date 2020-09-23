@@ -41,45 +41,6 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     
     let color: UIColor = .green
     
-    
-    //MARK: - Live Update Functions
-    
-    func changeSize(to closeUpMode: Bool) {
-        
-        let scale: CGFloat = 5
-        
-        if closeUpMode {
-//            sphereIdentifierRadius = 0.0025
-            lineWidthRadius = 0.00075
-            flowSphereRadius = 0.00075
-            speed = 0.075
-            opacity = 0.75
-            lineOpacity = 0.4
-        } else {
-//            sphereIdentifierRadius *= scale
-            lineWidthRadius *= scale
-            flowSphereRadius *= scale
-            speed *= Float(scale)
-            opacity = 0.95
-            lineOpacity = 0.6
-
-        }
-//        scaleNodesInFrustrum(to: closeUpMode ? 1/3 : 3)
-        removeAllNodes(named: "animatingSphere")
-        drawLinesBetweenNodes()
-    }
-    
-    func scaleNodesInFrustrum(to scale: Float) {
-        if let pointOfView = self.arView.pointOfView {
-            for index in arView.nodesInsideFrustum(of: pointOfView).indices {
-                arView.nodesInsideFrustum(of: pointOfView)[index].scale = SCNVector3(arView.nodesInsideFrustum(of: pointOfView)[index].scale.x * scale,
-                                                                                     arView.nodesInsideFrustum(of: pointOfView)[index].scale.y * scale,
-                                                                                     arView.nodesInsideFrustum(of: pointOfView)[index].scale.z * scale)
-            }
-        }
-    }
-    
-    
     //MARK: - Setup
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -126,7 +87,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
             if self.viewModel.widgets.count < 2 { return }
             
             for index in self.viewModel.widgets.indices {
-                let pos1 = SCNVector3ToGLKVector3(self.viewModel.scnNodes[index].position)
+				let pos1 = SCNVector3ToGLKVector3(self.viewModel.widgets[index].scnNode.position)
                 self.viewModel.changePosition(to: SCNVector3(pos1.x, pos1.y, pos1.z), at: index)
             }
             
@@ -169,22 +130,16 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         let ninetyDegrees = GLKMathDegreesToRadians(-90)
         planeNode.eulerAngles = SCNVector3(ninetyDegrees, 0, 0)
         
-        let node = SCNNode()
-        
-        if let id = Int(imageAnchor.referenceImage.name ?? "Name not found") {
-            detectAndAssign(int: id, node: node)
-            addTextNode(to: node, name: viewModel.widgets[id].name)
-            addSphere(to: id)
-        }
-        
-        node.addChildNode(planeNode)
-        
-        return node
-    }
-    
-    func detectAndAssign(int: Int, node: SCNNode) {
-        viewModel.changeNode(to: node, at: int)
-        viewModel.changeDetected(at: int)
+		if let imageId = Int(imageAnchor.referenceImage.name ?? "Name not found"),
+		   let widget = viewModel.detectWidget(with: imageId) {
+			addTextNode(to: widget)
+			addSphere(to: widget)
+			
+			widget.scnNode.addChildNode(planeNode)
+			return widget.scnNode
+		} else {
+			return SCNNode()
+		}
     }
     
     //MARK: - Geometry
@@ -195,9 +150,9 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         
         for widget1 in viewModel.detectedWidgets {
             for widget2 in viewModel.detectedWidgets {
-				if isAncestor(parent: widget1, child: widget2) {
-                    let pos1 = viewModel.scnNodes[widget1.id].position
-                    let pos2 = viewModel.scnNodes[widget2.id].position
+				if widget1.children.contains(widget2.id) {
+                    let pos1 = widget1.scnNode.position
+					let pos2 = widget2.scnNode.position
                     createLine(from: pos1, to: pos2)
                 }
             }
@@ -207,9 +162,9 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     func animateStream() {
         for widget1 in viewModel.detectedWidgets {
             for widget2 in viewModel.detectedWidgets {
-                if isAncestor(parent: widget1, child: widget2) {
-                    let start = viewModel.scnNodes[widget1.id].position
-                    let end = viewModel.scnNodes[widget2.id].position
+                if widget1.children.contains(widget2.id) {
+                    let start = widget1.scnNode.position
+                    let end = widget2.scnNode.position
                     createAnimatingNode(from: start, to: end)
                 }
             }
@@ -217,7 +172,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     }
 
     
-    func addTextNode(to node: SCNNode, name: String) {
+	func addTextNode(to widget: Widget) {
         print("Making Text Nodes")
         let textScaleFactor: Float = 0.00075
         let textFont = "Avenir-Next-Bold"
@@ -227,7 +182,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         let zOffset: Float = 0.001
         let padding: CGFloat = 0.0075
         
-        let text = SCNText(string: name, extrusionDepth: textDepth)
+		let text = SCNText(string: widget.name, extrusionDepth: textDepth)
         text.font = UIFont(name: textFont, size: textSize)
         text.alignmentMode = CATextLayerAlignmentMode.center.rawValue
         text.firstMaterial?.diffuse.contents = UIColor.white
@@ -241,7 +196,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         textNode.scale = SCNVector3(textScaleFactor, textScaleFactor, textScaleFactor)
         textNode.position.z += zOffset
         textNode.opacity = 1
-        textNode.name = name
+		textNode.name = widget.name
         textNode.pivot = SCNMatrix4MakeTranslation((maxBound.x - minBound.x) / 2, (maxBound.y - minBound.y) / 2 + 2, 0)
         
         let (min, max) = textNode.boundingBox
@@ -257,28 +212,30 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         let billboardConstraint = SCNBillboardConstraint()
         planeNode.constraints = [billboardConstraint]
         
-        node.addChildNode(planeNode)
+		widget.scnNode.addChildNode(planeNode)
     }
     
     func createLine(from node1: SCNVector3, to node2: SCNVector3)  {
         let twoPointsNode1 = SCNNode()
         twoPointsNode1.name = "line"
         arView.scene.rootNode.addChildNode(
-            twoPointsNode1.buildLineInTwoPointsWithRotation(from: node1,
-                                                            to: node2,
-                                                            radius: lineWidthRadius,
-                                                            opacity: lineOpacity,
-                                                            color: color,
-                                                            yOffset: yOffset))
+            twoPointsNode1.buildLineInTwoPointsWithRotation(
+				from: node1,
+                to: node2,
+                radius: lineWidthRadius,
+                opacity: lineOpacity,
+                color: color,
+                yOffset: yOffset
+			)
+		)
     }
     
-    func addSphere(to id: Int) {
-        
-        viewModel.scnNodes[id].enumerateChildNodes { (node, _) in
-                   if node.name == "sphere" {
-                       node.removeFromParentNode()
-                   }
-               }
+    func addSphere(to widget: Widget) {
+		widget.scnNode.enumerateChildNodes { (node, _) in
+			if node.name == "sphere" {
+				node.removeFromParentNode()
+			}
+		}
         
         let sphereNode = SCNNode()
         sphereNode.geometry = SCNSphere(radius: sphereIdentifierRadius)
@@ -287,7 +244,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         sphereNode.name = "sphere"
         sphereNode.position.y += yOffset
        
-        viewModel.scnNodes[id].addChildNode(sphereNode)
+		widget.scnNode.addChildNode(sphereNode)
     }
         
     func initiateStreamAnimation() {
@@ -322,17 +279,13 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     }
     
     //MARK: - Utility Functions
+	
     func removeAllNodes(named name: String) {
         arView.scene.rootNode.enumerateChildNodes { (node, _) in
-            
             if node.name == name {
                 node.removeFromParentNode()
             }
         }
-    }
-    
-    func isAncestor(parent: Model.WidgetIdentifier, child: Model.WidgetIdentifier) -> Bool {
-		return parent.children.contains { $0.id == child.id }
     }
 }
 
