@@ -63,7 +63,7 @@ struct WidgetList: View {
                             
                             Spacer()
                             
-                            Image("\(widget.id)")
+                            Image("\(widget.photoId)")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(height: 80)

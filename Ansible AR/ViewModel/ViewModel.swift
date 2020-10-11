@@ -26,8 +26,7 @@ class ViewModel: ObservableObject, Identifiable {
     }
 	
 	func detectWidget(with imageId: Int) -> Widget? {
-		//TODO: Don't use widget name as a way of identifying. Save imageId on widget
-		guard let index = self.widgets.firstIndex(where: { $0.name == "widget\(imageId)" }) else { return nil }
+		guard let index = self.widgets.firstIndex(where: { $0.photoId == imageId }) else { return nil }
 		self.widgets[index].detected = true
 		return self.widgets[index]
 	}
@@ -43,6 +42,7 @@ class ViewModel: ObservableObject, Identifiable {
 				Widget(
 					id: $0.documentID,
 					name: $0.data()["name"] as? String ?? "",
+					photoId: $0.data()["photo_id"] as? Int ?? 0,
 					children: $0.data()["dependencies"] as? [String] ?? []
 				)
 			} ?? []

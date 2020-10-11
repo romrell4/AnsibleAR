@@ -10,13 +10,15 @@ import SceneKit
 struct Widget: Identifiable, Hashable {
 	let id: String
 	let name: String
+	let photoId: Int
 	var children: [String]
 	var detected: Bool = false
 	var scnNode: SCNNode
 	
-	init(id: String, name: String, children: [String]) {
+	init(id: String, name: String, photoId: Int, children: [String]) {
 		self.id = id
 		self.name = name
+		self.photoId = photoId
 		self.children = children
 		self.scnNode = SCNNode()
 	}
