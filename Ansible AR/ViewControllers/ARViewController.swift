@@ -31,18 +31,17 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     
     var sphereIdentifierRadius: CGFloat = 0.004
     var lineWidthRadius: CGFloat = 0.00075
-    var flowSphereRadius: CGFloat = 0.00075
-    var yOffset: Float = 0.01
-    var speed: Float = 0.075
+    var flowSphereRadius: CGFloat = 0.001
+    var yOffset: Float = 0.00
+    var speed: Float = 0.060
     var opacity: CGFloat = 0.75
     var lineOpacity: CGFloat = 0.4
-    
-    let color: UIColor = .green
     
     //MARK: - Setup
     override func viewDidLoad() {
         super.viewDidLoad()
         
+		viewModel.load()
 		self.arView.delegate = self
 		
 		let configuration = ARWorldTrackingConfiguration()
@@ -138,9 +137,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         for widget1 in viewModel.detectedWidgets {
             for widget2 in viewModel.detectedWidgets {
                 if widget1.children.contains(widget2.id) {
-                    let start = widget1.scnNode.position
-                    let end = widget2.scnNode.position
-                    createAnimatingNode(from: start, to: end)
+                    createAnimatingNode(from: widget1, to: widget2)
                 }
             }
         }
@@ -199,7 +196,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
                 to: node2,
                 radius: lineWidthRadius,
                 opacity: lineOpacity,
-                color: color,
+				color: .green,
                 yOffset: yOffset
 			)
 		)
@@ -214,7 +211,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         
         let sphereNode = SCNNode()
         sphereNode.geometry = SCNSphere(radius: sphereIdentifierRadius)
-        sphereNode.geometry?.firstMaterial?.diffuse.contents = color
+		sphereNode.geometry?.firstMaterial?.diffuse.contents = UIColor.green
         sphereNode.opacity = opacity
         sphereNode.name = "sphere"
         sphereNode.position.y += yOffset
@@ -228,8 +225,10 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         }
     }
 	
-    func createAnimatingNode(from start: SCNVector3, to end: SCNVector3) {
-        
+    func createAnimatingNode(from startWidget: Widget, to endWidget: Widget) {
+		let start = startWidget.scnNode.position
+		let end = endWidget.scnNode.position
+		
         let newStart = SCNVector3(start.x, start.y + yOffset, start.z)
         let newEnd = SCNVector3(end.x, end.y + yOffset, end.z)
         
@@ -238,7 +237,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         
         let node = SCNNode()
         node.geometry = SCNSphere(radius: flowSphereRadius)
-        node.geometry?.firstMaterial?.diffuse.contents = color
+		node.geometry?.firstMaterial?.diffuse.contents = startWidget.sendingEventsTo.contains(endWidget.id) ? UIColor.red : UIColor.green
         node.opacity = 1
         node.position = newStart
         node.name = "animatingSphere"

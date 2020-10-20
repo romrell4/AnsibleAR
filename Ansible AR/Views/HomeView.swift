@@ -11,7 +11,6 @@ import SwiftUI
 
 struct HomeView: View {
 
-    @EnvironmentObject var viewModel: ViewModel
     @State var isActive = false
     
     var body: some View {
@@ -37,7 +36,7 @@ struct HomeView: View {
                 Spacer()
                 
                 HStack(spacing: 16) {
-                    Button(action: { self.load(); self.isActive = true } ) {
+                    Button(action: { self.isActive = true } ) {
                         HStack {
                             Spacer()
                             
@@ -56,16 +55,8 @@ struct HomeView: View {
             }
                 
             .padding()
-            .onAppear {
-                self.load()
-            }
         }
         .darkModeFix()
         .statusBar(hidden: true)
-    }
-    
-    func load() {
-        print("loading onAppear")
-        viewModel.load()
     }
 }

@@ -12,6 +12,7 @@ struct Widget: Identifiable, Hashable {
 	let name: String
 	let photoId: Int
 	var children: [String]
+	var sendingEventsTo: [String] = []
 	var detected: Bool = false
 	var scnNode: SCNNode
 	
