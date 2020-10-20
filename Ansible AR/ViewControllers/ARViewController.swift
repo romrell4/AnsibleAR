@@ -23,8 +23,6 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         self.view = ARSCNView(frame: .zero)
     }
     
-    let configuration = ARWorldTrackingConfiguration()
-    
     var tempNode = SCNNode()
     
     var tempLocation = SCNVector3()
@@ -45,38 +43,15 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupTapGesture()
-        setupARView()
-        setupImageDetection()
-        
+		self.arView.delegate = self
+		
+		let configuration = ARWorldTrackingConfiguration()
+		configuration.detectionImages = ARReferenceImage.referenceImages(inGroupNamed: "widgetIdentifiers", bundle: nil)
+		configuration.maximumNumberOfTrackedImages = configuration.detectionImages.count
         configuration.planeDetection = [.horizontal, .vertical]
-        self.arView.session.run(self.configuration)
+        self.arView.session.run(configuration)
         
         initiateStreamAnimation()
-    }
-    
-    func setupTapGesture() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
-        tapGesture.numberOfTapsRequired = 1
-        self.view.addGestureRecognizer(tapGesture)
-        
-    }
-    @objc func handleTap() {
-        
-    }
-    
-    func setupARView() {
-        self.arView.delegate = self
-        //           self.arView.debugOptions = [ARSCNDebugOptions.showWorldOrigin, ARSCNDebugOptions.showFeaturePoints]
-    }
-    
-    func setupImageDetection() {
-        guard let storedImages = ARReferenceImage.referenceImages(inGroupNamed: "widgetIdentifiers", bundle: nil) else {
-            fatalError("Missing AR Resources images")
-        }
-        
-        self.configuration.detectionImages = storedImages
-        self.configuration.maximumNumberOfTrackedImages = storedImages.count
     }
     
     //MARK: - Renderers
