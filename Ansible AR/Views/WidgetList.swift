@@ -51,7 +51,7 @@ struct WidgetList: View {
                                         .frame(width: self.firstColumnWidth)
                                         
                                         Text("[")
-										List(widget.children, id: \.self) { id in
+                                        List(widget.children, id: \.self) { id in
                                             Text(id)
                                         }
                                         Text("]")

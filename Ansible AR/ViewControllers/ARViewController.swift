@@ -41,12 +41,12 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-		viewModel.load()
-		self.arView.delegate = self
-		
-		let configuration = ARWorldTrackingConfiguration()
-		configuration.detectionImages = ARReferenceImage.referenceImages(inGroupNamed: "widgetIdentifiers", bundle: nil)
-		configuration.maximumNumberOfTrackedImages = configuration.detectionImages.count
+        viewModel.load()
+        self.arView.delegate = self
+        
+        let configuration = ARWorldTrackingConfiguration()
+        configuration.detectionImages = ARReferenceImage.referenceImages(inGroupNamed: "widgetIdentifiers", bundle: nil)
+        configuration.maximumNumberOfTrackedImages = configuration.detectionImages.count
         configuration.planeDetection = [.horizontal, .vertical]
         self.arView.session.run(configuration)
         
@@ -61,7 +61,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
             if self.viewModel.widgets.count < 2 { return }
             
             for index in self.viewModel.widgets.indices {
-				let pos1 = SCNVector3ToGLKVector3(self.viewModel.widgets[index].scnNode.position)
+                let pos1 = SCNVector3ToGLKVector3(self.viewModel.widgets[index].scnNode.position)
                 self.viewModel.changePosition(to: SCNVector3(pos1.x, pos1.y, pos1.z), at: index)
             }
             
@@ -103,7 +103,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         let ninetyDegrees = GLKMathDegreesToRadians(-90)
         planeNode.eulerAngles = SCNVector3(ninetyDegrees, 0, 0)
         
-		if let imageId = Int(imageAnchor.referenceImage.name ?? "Name not found") {
+        if let imageId = Int(imageAnchor.referenceImage.name ?? "Name not found") {
             let widget = viewModel.detectWidget(with: imageId)
             addTextNode(to: widget)
             addSphere(to: widget)
@@ -111,9 +111,9 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
             let node = widget.scnNode
             node.addChildNode(planeNode)
             return node
-		} else {
-			return SCNNode()
-		}
+        } else {
+            return SCNNode()
+        }
     }
     
     //MARK: - Geometry
@@ -124,15 +124,15 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         
         for widget1 in viewModel.detectedWidgets {
             for widget2 in viewModel.detectedWidgets {
-				if widget1.children.contains(widget2.id) {
+                if widget1.children.contains(widget2.id) {
                     let pos1 = widget1.scnNode.position
-					let pos2 = widget2.scnNode.position
+                    let pos2 = widget2.scnNode.position
                     createLine(from: pos1, to: pos2)
                 }
             }
         }
     }
-	
+    
     func animateStream() {
         for widget1 in viewModel.detectedWidgets {
             for widget2 in viewModel.detectedWidgets {
@@ -142,9 +142,9 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
             }
         }
     }
-
     
-	func addTextNode(to widget: Widget) {
+    
+    func addTextNode(to widget: Widget) {
         print("Making Text Node")
         let textScaleFactor: Float = 0.00075
         let textFont = "Avenir-Next-Bold"
@@ -154,7 +154,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         let zOffset: Float = 0.001
         let padding: CGFloat = 0.0075
         
-		let text = SCNText(string: widget.name, extrusionDepth: textDepth)
+        let text = SCNText(string: widget.name, extrusionDepth: textDepth)
         text.font = UIFont(name: textFont, size: textSize)
         text.alignmentMode = CATextLayerAlignmentMode.center.rawValue
         text.firstMaterial?.diffuse.contents = UIColor.white
@@ -168,7 +168,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         textNode.scale = SCNVector3(textScaleFactor, textScaleFactor, textScaleFactor)
         textNode.position.z += zOffset
         textNode.opacity = 1
-		textNode.name = widget.name
+        textNode.name = widget.name
         textNode.pivot = SCNMatrix4MakeTranslation((maxBound.x - minBound.x) / 2, (maxBound.y - minBound.y) / 2 + 2, 0)
         
         let (min, max) = textNode.boundingBox
@@ -185,7 +185,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         planeNode.constraints = [billboardConstraint]
         
         let scnNode = widget.scnNode
-		scnNode.addChildNode(planeNode)
+        scnNode.addChildNode(planeNode)
     }
     
     func createLine(from node1: SCNVector3, to node2: SCNVector3)  {
@@ -193,24 +193,24 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         twoPointsNode1.name = "line"
         arView.scene.rootNode.addChildNode(
             twoPointsNode1.buildLineInTwoPointsWithRotation(
-				from: node1,
+                from: node1,
                 to: node2,
                 radius: lineWidthRadius,
                 opacity: lineOpacity,
-				color: .green,
+                color: .green,
                 yOffset: yOffset
-			)
-		)
+            )
+        )
     }
     
     func addSphere(to widget: Widget) {
         //If a widget is passed in, use it's scnNode. Otherwise, just add to the root
         let scnNode = widget.scnNode
-		scnNode.enumerateChildNodes { (node, _) in
-			if node.name == "sphere" {
-				node.removeFromParentNode()
-			}
-		}
+        scnNode.enumerateChildNodes { (node, _) in
+            if node.name == "sphere" {
+                node.removeFromParentNode()
+            }
+        }
         
         let sphereNode = SCNNode()
         sphereNode.geometry = SCNSphere(radius: sphereIdentifierRadius)
@@ -218,20 +218,20 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         sphereNode.opacity = opacity
         sphereNode.name = "sphere"
         sphereNode.position.y += yOffset
-       
-		scnNode.addChildNode(sphereNode)
-    }
         
+        scnNode.addChildNode(sphereNode)
+    }
+    
     func initiateStreamAnimation() {
         _ = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { _ in
             self.animateStream()
         }
     }
-	
+    
     func createAnimatingNode(from startWidget: Widget, to endWidget: Widget) {
-		let start = startWidget.scnNode.position
-		let end = endWidget.scnNode.position
-		
+        let start = startWidget.scnNode.position
+        let end = endWidget.scnNode.position
+        
         let newStart = SCNVector3(start.x, start.y + yOffset, start.z)
         let newEnd = SCNVector3(end.x, end.y + yOffset, end.z)
         
@@ -240,7 +240,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         
         let node = SCNNode()
         node.geometry = SCNSphere(radius: flowSphereRadius)
-		node.geometry?.firstMaterial?.diffuse.contents = startWidget.sendingEventsTo.contains(endWidget.id) ? UIColor.red : UIColor.green
+        node.geometry?.firstMaterial?.diffuse.contents = startWidget.sendingEventsTo.contains(endWidget.id) ? UIColor.red : UIColor.green
         node.opacity = 1
         node.position = newStart
         node.name = "animatingSphere"
@@ -256,7 +256,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     }
     
     //MARK: - Utility Functions
-	
+    
     func removeAllNodes(named name: String) {
         arView.scene.rootNode.enumerateChildNodes { (node, _) in
             if node.name == name {
@@ -265,5 +265,3 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         }
     }
 }
-
-

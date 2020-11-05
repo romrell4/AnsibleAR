@@ -41,7 +41,7 @@ struct InfoView: View {
                 
                 Spacer()
             }
-
+            
             .navigationBarTitle("Info", displayMode: .inline)
         }
     }

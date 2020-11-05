@@ -10,12 +10,12 @@
 import SwiftUI
 
 struct HomeView: View {
-
+    
     @State var isActive = false
     
     var body: some View {
         NavigationView {
-
+            
             VStack(spacing: 0) {
                 
                 Spacer()
@@ -30,7 +30,7 @@ struct HomeView: View {
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
                     .padding()
-
+                
                 Spacer()
                 Spacer()
                 Spacer()
@@ -53,7 +53,7 @@ struct HomeView: View {
                 .padding(.bottom)
                 NavigationLink(destination: ARView(), isActive: $isActive) { EmptyView() }
             }
-                
+            
             .padding()
         }
         .darkModeFix()

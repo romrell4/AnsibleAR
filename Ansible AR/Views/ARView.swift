@@ -34,7 +34,7 @@ struct ARView: View {
     }
     
     var sheet: some View {
-
+        
         switch self.activeSheet {
         case .listSheet:
             return AnyView(WidgetList().environmentObject(viewModel))
@@ -63,8 +63,8 @@ struct ARView: View {
                     }
                     
                     Spacer()
-					
-					Button(action: {
+                    
+                    Button(action: {
                         self.activeSheet = .listSheet
                         self.isPresented = true
                     }) {
@@ -77,7 +77,7 @@ struct ARView: View {
                                 .foregroundColor(.black)
                         }
                     }
-				}
+                }
                 
                 Spacer()
             }

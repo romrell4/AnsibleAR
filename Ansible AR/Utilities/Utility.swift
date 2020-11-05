@@ -16,7 +16,7 @@ public struct DarkView<Content> : View where Content : View {
         self.darkContent = content()
         self.on = on
     }
-
+    
     public var body: some View {
         ZStack {
             if on {
@@ -54,7 +54,7 @@ func normalizeVector(_ iv: SCNVector3) -> SCNVector3 {
 }
 
 extension SCNNode {
-
+    
     func buildLineInTwoPointsWithRotation(from startPoint: SCNVector3, to endPoint: SCNVector3, radius: CGFloat, opacity: CGFloat, color: UIColor, yOffset: Float) -> SCNNode {
         
         let newStartPoint = SCNVector3(startPoint.x, startPoint.y + yOffset, startPoint.z)
