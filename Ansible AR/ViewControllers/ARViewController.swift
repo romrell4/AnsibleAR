@@ -70,7 +70,6 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        
         guard let imageAnchor = anchor as? ARImageAnchor else { return nil }
         
         let node = initializeNode(for: imageAnchor)
@@ -104,13 +103,14 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         let ninetyDegrees = GLKMathDegreesToRadians(-90)
         planeNode.eulerAngles = SCNVector3(ninetyDegrees, 0, 0)
         
-		if let imageId = Int(imageAnchor.referenceImage.name ?? "Name not found"),
-		   let widget = viewModel.detectWidget(with: imageId) {
-			addTextNode(to: widget)
-			addSphere(to: widget)
-			
-			widget.scnNode.addChildNode(planeNode)
-			return widget.scnNode
+		if let imageId = Int(imageAnchor.referenceImage.name ?? "Name not found") {
+            let widget = viewModel.detectWidget(with: imageId)
+            addTextNode(to: widget)
+            addSphere(to: widget)
+            
+            let node = widget.scnNode
+            node.addChildNode(planeNode)
+            return node
 		} else {
 			return SCNNode()
 		}
@@ -145,7 +145,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
 
     
 	func addTextNode(to widget: Widget) {
-        print("Making Text Nodes")
+        print("Making Text Node")
         let textScaleFactor: Float = 0.00075
         let textFont = "Avenir-Next-Bold"
         let textSize: CGFloat = 0.2
@@ -184,7 +184,8 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         let billboardConstraint = SCNBillboardConstraint()
         planeNode.constraints = [billboardConstraint]
         
-		widget.scnNode.addChildNode(planeNode)
+        let scnNode = widget.scnNode
+		scnNode.addChildNode(planeNode)
     }
     
     func createLine(from node1: SCNVector3, to node2: SCNVector3)  {
@@ -203,7 +204,9 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     }
     
     func addSphere(to widget: Widget) {
-		widget.scnNode.enumerateChildNodes { (node, _) in
+        //If a widget is passed in, use it's scnNode. Otherwise, just add to the root
+        let scnNode = widget.scnNode
+		scnNode.enumerateChildNodes { (node, _) in
 			if node.name == "sphere" {
 				node.removeFromParentNode()
 			}
@@ -211,12 +214,12 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         
         let sphereNode = SCNNode()
         sphereNode.geometry = SCNSphere(radius: sphereIdentifierRadius)
-		sphereNode.geometry?.firstMaterial?.diffuse.contents = UIColor.green
+        sphereNode.geometry?.firstMaterial?.diffuse.contents = widget.isUnknown ? UIColor.red : UIColor.green
         sphereNode.opacity = opacity
         sphereNode.name = "sphere"
         sphereNode.position.y += yOffset
        
-		widget.scnNode.addChildNode(sphereNode)
+		scnNode.addChildNode(sphereNode)
     }
         
     func initiateStreamAnimation() {

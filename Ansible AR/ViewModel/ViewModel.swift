@@ -25,8 +25,10 @@ class ViewModel: ObservableObject, Identifiable {
 		self.widgets[index].scnNode.position = position
     }
 	
-	func detectWidget(with imageId: Int) -> Widget? {
-		guard let index = self.widgets.firstIndex(where: { $0.photoId == imageId }) else { return nil }
+	func detectWidget(with imageId: Int) -> Widget {
+		guard let index = self.widgets.firstIndex(where: { $0.photoId == imageId }) else {
+            return Widget.unknown(photoId: imageId)
+        }
 		self.widgets[index].detected = true
 		return self.widgets[index]
 	}
