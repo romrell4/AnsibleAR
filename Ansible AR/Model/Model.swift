@@ -9,13 +9,14 @@ import SceneKit
 
 struct Widget: Identifiable, Hashable {
     let id: String
-    let name: String
+    var name: String
     let photoId: Int
     var children: [String]
     var sendingEventsTo: [String] = []
     var detected: Bool = false
     var scnNode: SCNNode
     var isUnknown: Bool
+    var needsUpdate: Bool = false
     
     init(id: String, name: String, photoId: Int, children: [String] = [], isUnknown: Bool = false) {
         self.id = id
@@ -24,6 +25,10 @@ struct Widget: Identifiable, Hashable {
         self.children = children
         self.scnNode = SCNNode()
         self.isUnknown = isUnknown
+    }
+    
+    func changed(other: Widget) -> Bool {
+        return self.name != other.name || self.children != other.children
     }
     
     static func unknown(photoId: Int) -> Widget {

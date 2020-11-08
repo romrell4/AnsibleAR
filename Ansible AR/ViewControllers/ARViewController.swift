@@ -23,12 +23,6 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         self.view = ARSCNView(frame: .zero)
     }
     
-    var tempNode = SCNNode()
-    
-    var tempLocation = SCNVector3()
-    var tempOrientation = SCNVector3()
-    var tempPosition = SCNVector3()
-    
     var sphereIdentifierRadius: CGFloat = 0.004
     var lineWidthRadius: CGFloat = 0.00075
     var flowSphereRadius: CGFloat = 0.001
@@ -57,15 +51,15 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     
     func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
         DispatchQueue.main.async {
-            
             if self.viewModel.widgets.count < 2 { return }
             
-            for index in self.viewModel.widgets.indices {
-                let pos1 = SCNVector3ToGLKVector3(self.viewModel.widgets[index].scnNode.position)
-                self.viewModel.changePosition(to: SCNVector3(pos1.x, pos1.y, pos1.z), at: index)
-            }
-            
             self.drawLinesBetweenNodes()
+            
+            //TODO: Update photo ID as well?
+            self.viewModel.widgets.filter { $0.needsUpdate }.forEach {
+                self.addTextNode(to: $0)
+                self.viewModel.markAsUpdated(widget: $0)
+            }
         }
     }
     
@@ -74,20 +68,6 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         
         let node = initializeNode(for: imageAnchor)
         return node
-    }
-    
-    func renderer(_ renderer: SCNSceneRenderer, willRenderScene scene: SCNScene, atTime time: TimeInterval) {
-        
-        DispatchQueue.main.async {
-            guard let pointOfView = self.arView.pointOfView else { return }
-            
-            let transform = pointOfView.transform
-            self.tempOrientation = SCNVector3(-transform.m31, -transform.m32, -transform.m33)
-            self.tempLocation = SCNVector3(transform.m41, transform.m42, transform.m43)
-            self.tempPosition = self.tempOrientation + self.tempLocation
-            
-            self.tempNode.position = self.tempPosition
-        }
     }
     
     func initializeNode(for imageAnchor: ARImageAnchor) -> SCNNode {
@@ -119,8 +99,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     //MARK: - Geometry
     
     func drawLinesBetweenNodes() {
-        
-        removeAllNodes(named: "line")
+        arView.scene.rootNode.removeAllNodex(named: "line")
         
         for widget1 in viewModel.detectedWidgets {
             for widget2 in viewModel.detectedWidgets {
@@ -145,6 +124,8 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     
     
     func addTextNode(to widget: Widget) {
+        widget.scnNode.removeAllNodex(named: "plane")
+        
         print("Making Text Node")
         let textScaleFactor: Float = 0.00075
         let textFont = "Avenir-Next-Bold"
@@ -177,6 +158,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         bkgPlane.cornerRadius = 1
         
         let planeNode = SCNNode(geometry: bkgPlane)
+        planeNode.name = "plane"
         planeNode.opacity = 0.8
         planeNode.position.y += yOffset
         planeNode.addChildNode(textNode)
@@ -254,11 +236,11 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         
         arView.scene.rootNode.addChildNode(node)
     }
-    
-    //MARK: - Utility Functions
-    
-    func removeAllNodes(named name: String) {
-        arView.scene.rootNode.enumerateChildNodes { (node, _) in
+}
+
+extension SCNNode {
+    func removeAllNodex(named name: String) {
+        self.enumerateChildNodes { (node, _) in
             if node.name == name {
                 node.removeFromParentNode()
             }

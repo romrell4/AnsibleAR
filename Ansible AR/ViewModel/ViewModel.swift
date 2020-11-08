@@ -33,21 +33,36 @@ class ViewModel: ObservableObject, Identifiable {
         return self.widgets[index]
     }
     
+    func markAsUpdated(widget: Widget) {
+        if let index = self.widgets.firstIndex(where: { $0.id == widget.id }) {
+            self.widgets[index].needsUpdate = false
+        }
+    }
+    
     func load() {
-        //This is making the obtuse assumption that widget names will always be "widget<id>"
-        func idFromName(_ name: String) -> Int? {
-            return Int(name.replacingOccurrences(of: "widget", with: ""))
+        func docToWidget(doc: QueryDocumentSnapshot) -> Widget {
+            Widget(
+                id: doc.documentID,
+                name: doc.data()["name"] as? String ?? "",
+                photoId: doc.data()["photo_id"] as? Int ?? 0,
+                children: doc.data()["dependencies"] as? [String] ?? []
+            )
         }
         
         db.collection("systems").addSnapshotListener { (snapshot, error) in
-            self.widgets = snapshot?.documents.filter { $0.data()["type"] as? String != "server" }.map {
-                Widget(
-                    id: $0.documentID,
-                    name: $0.data()["name"] as? String ?? "",
-                    photoId: $0.data()["photo_id"] as? Int ?? 0,
-                    children: $0.data()["dependencies"] as? [String] ?? []
-                )
-            } ?? []
+            snapshot?.documents.filter { $0.data()["type"] as? String != "server" }.forEach { doc in
+                let docWidget = docToWidget(doc: doc)
+                if let existingWidgetIndex = self.widgets.firstIndex(where: { $0.id == docWidget.id }) {
+                    // See if widget updated
+                    if self.widgets[existingWidgetIndex].changed(other: docWidget) {
+                        self.widgets[existingWidgetIndex].name = docWidget.name
+                        self.widgets[existingWidgetIndex].children = docWidget.children
+                        self.widgets[existingWidgetIndex].needsUpdate = true
+                    }
+                } else {
+                    self.widgets.append(docWidget)
+                }
+            }
         }
         db.collection("event_flows").addSnapshotListener { (snapshot, error) in
             snapshot?.documents.forEach {
